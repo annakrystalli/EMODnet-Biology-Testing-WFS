@@ -1,4 +1,4 @@
-# {{product_name}}
+# Test `EMODnetWFS` and `OBIShmpr` packages
 
 ## Introduction
 
@@ -25,7 +25,9 @@
 
 ## Data series
 
-{{data_series}}
+The first part of the work focused on the development of `EMODnetWFS`, a package for querying and downloading data from EMODnet WFS services.
+
+The second part of the work explored using `OBIShmpr` to generate a dataset of species occurnences, matched to environmental by querying available online data services
 
 ```
 {{data_wfs_request}}
@@ -41,7 +43,7 @@
 
 ### Code and methodology
 
-{{link_code}}
+
 
 ### Citation and download link
 

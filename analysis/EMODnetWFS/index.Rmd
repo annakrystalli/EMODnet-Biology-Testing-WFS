@@ -1,0 +1,149 @@
+---
+title: "Demo of the EMODnetWFS package"
+author: "Anna Krystalli"
+date: "18/06/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## `EMODnetWFS`
+
+
+## Installation
+
+You can install the development version of EMODnetWFS from GitHub with:
+
+``` r
+remotes::install_github("annakrystalli/EMODnetWFS")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+```{r example}
+library(EMODnetWFS)
+## basic example code
+```
+
+### Available services
+
+All available services are contained in the `emodnet_wfs` package dataset.
+
+
+```{r, echo=FALSE}
+knitr::kable(emodnet_wfs)
+```
+
+To explore available services in Rstudio use:
+```r
+View(emodnet_wfs)
+```
+
+### Create Service Client
+
+Create new WFS Client. The default service is `seabed_habitats_individual_habitat_map_and_model_datasets`.
+
+```{r}
+wfs <- emodnet_init_wfs_client()
+
+```
+
+You can access further services using the `service` argument. 
+
+```{r}
+
+wfs_bath <- emodnet_init_wfs_client(service = "bathymetry")
+
+wfs_bath$getUrl()
+```
+
+## Get WFS Layer info
+
+You can get metadata about the layers available from a service. The default service is `seabed_habitats_individual_habitat_map_and_model_datasets`.
+
+```{r}
+emodnet_get_wfs_info()
+```
+
+You can access information about a service using the `service` argument.
+
+```{r}
+emodnet_get_wfs_info(service = "bathymetry")
+```
+
+or you can pass a wfs client object.
+
+```{r}
+emodnet_get_wfs_info(wfs_bath)
+```
+
+You can also get info for specific layers from wfs object:
+
+```{r}
+wfs_cml <- emodnet_init_wfs_client("chemistry_marine_litter")
+emodnet_get_wfs_info(wfs_cml)
+
+layers <- c("bl_fishing_cleaning",
+          "bl_beacheslocations_2001_2008_monitoring")
+
+emodnet_get_layer_info(wfs = wfs_cml, layers = layers)
+```
+
+
+Finally, you can get details on all available services and layers from the server
+
+```{r}
+emodnet_get_all_wfs_info()
+```
+
+
+## Get WFS layers
+
+You can extract layers directly from a `wfs` object using layer names. All layers are downloaded as `sf` objects and the crs of outputs are standardised to `EPSG` code 4326 by default.
+
+```{r}
+emodnet_get_layers(wfs = wfs_cml, layers = layers)
+```
+
+You can chage the output crs through argument `crs`.
+
+```{r}
+emodnet_get_layers(wfs = wfs_cml, layers = layers, crs = 3857)
+
+```
+
+
+You can also extract layers directly from a WFS service The default service is `seabed_habitats_individual_habitat_map_and_model_datasets`.
+
+```{r}
+emodnet_get_layers(layers = c("dk003069", "dk003070"))
+
+```
+
+Use argument `service` to specify the required service.
+```{r}
+
+human_activities <- emodnet_get_layers(service = "human_activities", 
+                   layers = c("aquaculture", "dredging"))
+
+human_activities[["aquaculture"]]
+```
+
+
+Layers can also be returned to a single `sf` object through argument `reduce_layers`.  If `TRUE` the function will try to reduce all layers into a single `sf` and will fail if not.
+
+```{r}
+emodnet_get_layers(layers = c("dk003069", "dk003070"), 
+                   reduce_layers = TRUE)
+```
+
+ 
+```{r, error=TRUE}
+emodnet_get_layers(wfs = wfs_cml, layers = layers,
+                   reduce_layers = TRUE)
+```

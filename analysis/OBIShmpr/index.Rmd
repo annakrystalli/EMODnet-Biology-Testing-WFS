@@ -1,0 +1,143 @@
+---
+title: "Demo of the OBIShmpr package"
+author: "Anna Krystalli"
+date: "18/06/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Install
+
+``` r
+# install.packages("remotes")
+remotes::install_github("annakrystalli/OBIShmpr")
+```
+
+```{r}
+library(OBIShmpr)
+```
+
+
+## Aim: Match commercial shellfish species to environmental data
+
+
+### Species
+
+```{r}
+species_names <- c("Crassostrea gigas", "Palinurus elephas")
+```
+
+```{r}
+species_ids <- worrms::wm_name2id_(species_names) %>%
+    unlist()
+```
+
+```{r}
+
+ostrea_edulis_id <- worrms::wm_records_name("Ostrea edulis") %>% 
+    dplyr::filter(status == "accepted") %>%
+    dplyr::pull(valid_AphiaID)
+
+species_ids <- c(species_ids, ostrea_edulis_id) %>%
+    setNames(c(species_names, "Ostrea edulis"))
+
+species_ids
+```
+
+
+### Environmental layers
+
+#### Available layers
+
+Available layer in `OBIShmpr`
+
+```{r}
+DT::datatable(layer_info)
+```
+
+
+
+```{r}
+layer_codes <- c("BO_ph", "BO_phosphate", 
+                 "BO2_phosphatemean_bdmax", 
+                 "BO_nitrate", "BO2_nitratemean_bdmax", 
+                 "surface_nitrogen", "tn", "surface_carbon",
+                 "BO_sstmean", "BO_sstmin", "BO_sstmax", 
+                 "MS_biogeo13_sst_mean_5m", "MS_biogeo14_sst_min_5m",
+                 "MS_biogeo15_sst_max_5m")
+```
+
+## Match species to environmental data
+
+To query, I provide a valid Aphia ID to argument `sp_id`. I'm also limiting the search by providing one of the in-build bounding box geometries, in this case the North Western European Shelf (`bbox_nwes`)).
+
+
+### _Crassostrea gigas_
+
+I start with the AphiaID for _Crassostrea gigas_.
+
+```{r}
+sp_id1 <- species_ids[1]
+data_spp1 <- OBIShmpr::obis_match_habitat(sp_id = sp_id1, 
+                                          layers = layer_codes,
+                                          geometry = bbox_nwes)
+
+data_spp1
+```
+
+### _Palinurus elephas_
+
+Next I use the AphiaID for _Palinurus elephas_.
+
+```{r}
+sp_id2 <- species_ids[2]
+
+data_spp2 <- OBIShmpr::obis_match_habitat(
+    sp_id = sp_id2, 
+    layers = layer_codes,
+    geometry = bbox_nwes)
+
+data_spp2
+```
+
+
+## Plot
+
+```{r}
+library(ggplot2)
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+
+
+ggplot() +
+    geom_sf(data = world) +
+    geom_sf(data = data_spp1, aes(color = BO_ph) ) +
+    coord_sf(crs = 3035,
+             xlim = c(2426378.0132, 7093974.6215),
+             ylim = c(1308101.2618, 5446513.5222)) +
+    theme_bw() +
+    ggtitle(names(sp_id1),
+            subtitle = paste0('AphiaID = ', sp_id1))
+
+```
+
+
+```{r}
+library(ggplot2)
+world <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf")
+
+
+ggplot() +
+    geom_sf(data = world) +
+    geom_sf(data = data_spp2, aes(color = BO_ph) ) +
+    coord_sf(crs = 3035,
+             xlim = c(2426378.0132, 7093974.6215),
+             ylim = c(1308101.2618, 5446513.5222)) +
+    theme_bw() +
+    ggtitle(names(sp_id2),
+            subtitle = paste0('AphiaID = ', sp_id2))
+
+```
+
