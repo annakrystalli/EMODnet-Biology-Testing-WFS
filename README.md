@@ -27,7 +27,12 @@
 
 The first part of the work focused on the development of `EMODnetWFS`, a package for querying and downloading data from EMODnet WFS services.
 
+[See vignette](https://annakrystalli.me/EMODnet-Biology-Testing-WFS/analysis/EMODnetWFS/)
+
 The second part of the work explored using `OBIShmpr` to generate a dataset of species occurnences, matched to environmental by querying available online data services
+
+[See vignette](https://annakrystalli.me/EMODnet-Biology-Testing-WFS/analysis/OBIShmpr/)
+
 
 ```
 {{data_wfs_request}}
