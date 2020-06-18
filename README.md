@@ -2,7 +2,11 @@
 
 ## Introduction
 
-{{product_introduction}}
+Often researchers are interested in acceding data on species occurences and matching them to local environmental parameters.
+
+Package `OBIShmpr` allows researchers to perform such queries to OBIS and then to match the resulting occurrences to a large number of publically available marine environmental data layers.
+
+One of this data sources is EMODnet WFS. Acces to these data is now possible through a lightweight wrapper package `EMODnetWFS`.
 
 ## Directory structure
 
